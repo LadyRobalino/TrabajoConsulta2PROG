@@ -82,8 +82,51 @@ Primero usamos la siguiente sentencia de sql en mysql:
 
 3. Ahora mediante un try-catch hacemos la conexión y procesamos resultados guardando en variables los datos obtenidos de la base de datos y finalmente se imprime:
 
+# Conexión a MySQL con Scala
 
-![imagen_2025-01-23_151810023](https://github.com/user-attachments/assets/b4453bb0-e9e9-4eea-b6d5-722f51592189)
+Una vez hecho lo anterior, mediante un bloque `try-catch` realizamos la conexión a la base de datos, procesamos los resultados guardándolos en variables, y finalmente los imprimimos.
+
+```scala
+import java.sql.{Connection, DriverManager, ResultSet}
+
+object conexionSql extends App {
+  // Parámetros de conexión
+  val url = "jdbc:mysql://localhost:3306/consulta" // Nombre de la base de datos: consulta
+  val username = "root"
+  val password = "lady"
+
+  var connection: Connection = null
+
+  try {
+    // Establecer la conexión
+    connection = DriverManager.getConnection(url, username, password)
+    println("Conexión exitosa a la base de datos!")
+
+    // Crear un Statement y ejecutar una consulta
+    val statement = connection.createStatement()
+    val resultSet: ResultSet = statement.executeQuery("SELECT * FROM estudiante")
+
+    // Procesar los resultados
+    while (resultSet.next()) {
+      val id = resultSet.getInt("id")
+      val nombre = resultSet.getString("nombre")
+      val ciclos = resultSet.getString("ciclos")
+      val numeroIdentidad = resultSet.getString("numero_identidad")
+      println(s"ID: $id, \n\tNombre: $nombre, \n\tCiclos: $ciclos, \n\tNúmero de Identidad: $numeroIdentidad")
+      println("")
+    }
+  } catch {
+    case e: Exception => e.printStackTrace()
+  } finally {
+    // Cerrar la conexión
+    if (connection != null) {
+      connection.close()
+      println("Conexión cerrada.")
+    }
+  }
+}
+```
+![image](https://github.com/user-attachments/assets/086a9227-b456-4182-b4c0-13bff442e7d0)
 
       
 
